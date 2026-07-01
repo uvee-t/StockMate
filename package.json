@@ -1,37 +1,36 @@
 {
-  "name": "stockmate",
-  "version": "1.0.0",
-  "description": "StockMate is a modular Inventory Management System built with Node.js, Express.js, MongoDB, and JWT Authentication.",
-  "keywords": [
-    "Inventory",
-    "Management",
-    "System"
-  ],
-  "homepage": "https://github.com/uvee-t/StockMate#readme",
-  "bugs": {
-    "url": "https://github.com/uvee-t/StockMate/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uvee-t/StockMate.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "type": "module",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "joi": "^18.2.3",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.3",
-    "prettier": "^3.9.4"
-  }
+    "name": "stockmate",
+    "version": "1.0.0",
+    "description": "StockMate is a modular Inventory Management System built with Node.js, Express.js, MongoDB, and JWT Authentication.",
+    "keywords": [
+        "Inventory",
+        "Management",
+        "System"
+    ],
+    "homepage": "https://github.com/uvee-t/StockMate#readme",
+    "bugs": {
+        "url": "https://github.com/uvee-t/StockMate/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/uvee-t/StockMate.git"
+    },
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "server.js",
+    "scripts": {
+        "start": "node --watch server.js"
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.6",
+        "dotenv": "^17.4.2",
+        "express": "^5.2.1",
+        "joi": "^18.2.3",
+        "jsonwebtoken": "^9.0.3",
+        "mongoose": "^9.7.3",
+        "prettier": "^3.9.4"
+    }
 }
