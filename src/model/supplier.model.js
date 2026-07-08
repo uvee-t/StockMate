@@ -1,10 +1,24 @@
 import mongoose from 'mongoose';
-const userSchema = new mongoose.Schema(
+const supplierSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: [true, 'Name is required'],
             minLength: 2,
+            maxLength: 50,
+            trim: true,
+        },
+        contactPerson: {
+            type: String,
+            required: [true, 'Contact Person is required'],
+            minLength: 2,
+            maxLength: 50,
+            trim: true,
+        },
+        phone: {
+            type: String,
+            required: [true, 'Phone Number is required'],
+            minLength: 8,
             maxLength: 50,
             trim: true,
         },
@@ -20,19 +34,17 @@ const userSchema = new mongoose.Schema(
                 'Please fill a valid email address',
             ],
         },
-        passwordHash: {
+        address: {
             type: String,
-            required: [true, 'Password is required'],
-        },
-        role: {
-            type: String,
-            enum: ['admin', 'manager'],
-            required: [true, 'Role is required'],
+            required: [true, 'Name is required'],
+            minLength: 5,
+            maxLength: 200,
+            trim: true,
         },
     },
     { timestamps: true },
 );
 
-const User = mongoose.model('User', userSchema);
+const Supplier = mongoose.model('Supplier', supplierSchema);
 
-export { User };
+export { Supplier };
