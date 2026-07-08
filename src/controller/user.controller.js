@@ -2,6 +2,7 @@ import { ApiError } from '../error/api.error.js';
 import { registerValidationSchema, loginValidationSchema } from '../validation/user.validation.js';
 import { User } from '../model/user.model.js';
 import { generateHash, validateHash } from '../util/hash.util.js';
+import { generateToken } from '../util/jwt.util.js';
 
 const userRegistrationController = async (req, res) => {
     const { error, value } = registerValidationSchema.validate(req.body, { abortEarly: false });
@@ -58,9 +59,18 @@ const userLoginController = async (req, res) => {
     if (!isPasswordValid) {
         throw new ApiError(401, 'Invalid email or password');
     }
+    const accessToken = generateToken({ userId: user._id, role: user.role });
 
-    
+    res.cookie('token', accessToken, {
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+    });
 
+    return res.status(200).json({
+        success: true,
+        token: accessToken,
+    });
 };
 
-export { userRegistrationController };
+export { userRegistrationController, userLoginController };

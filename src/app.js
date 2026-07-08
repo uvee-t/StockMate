@@ -18,13 +18,25 @@ app.use(express.static(path.resolve('./public')));
 app.use('/api/auth/', userRouter);
 
 app.use((err, req, res, next) => {
-    if (err) {
-        res.status(err.statusCode).json({
+    if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({
             success: false,
-            message: err.message,
-            ...(err.details && { details: err.details }),
+            message: 'Your session has expired. Please login again.',
         });
     }
+
+    if (err.name === 'JsonWebTokenError') {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid authentication token.',
+        });
+    }
+
+    return res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || 'Internal server error.',
+        ...(err.details && { details: err.details }),
+    });
 });
 
 export { app };
