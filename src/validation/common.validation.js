@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-const emailValidation = Joi.string().email().max(100).lowercase().trim().required();
+const emailValidation = Joi.string().email().max(100).lowercase().trim();
 
 const passwordValidation = Joi.string()
     .min(8)
