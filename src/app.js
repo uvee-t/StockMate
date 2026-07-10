@@ -11,6 +11,7 @@ import warehouseRouter from './router/warehouse.route.js';
 import productRouter from './router/product.route.js';
 import inventoryRouter from './router/inventory.route.js';
 import purchaseRouter from './router/purchase.route.js';
+import salesRouter from './router/sales.route.js';
 const app = express();
 
 app.use(cors(corsOptions));
@@ -25,6 +26,7 @@ app.use('/api/warehouses', warehouseRouter);
 app.use('/api/products', productRouter);
 app.use('/api/inventory', inventoryRouter);
 app.use('/api/purchase-orders', purchaseRouter);
+app.use('/api/sales', salesRouter);
 
 app.use((err, req, res, next) => {
     if (err.name === 'TokenExpiredError') {
