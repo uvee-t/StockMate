@@ -7,6 +7,7 @@ import { ApiError } from './error/api.error.js';
 import { corsOptions } from './config/cors.config.js';
 import userRouter from './router/user.route.js';
 import supplierRoute from './router/supplier.route.js';
+import warehouseRouter from './router/warehouse.route.js';
 const app = express();
 
 app.use(cors(corsOptions));
@@ -17,6 +18,7 @@ app.use(express.static(path.resolve('./public')));
 
 app.use('/api/auth/', userRouter);
 app.use('/api/suppliers', supplierRoute);
+app.use('/api/warehouses', warehouseRouter);
 
 app.use((err, req, res, next) => {
     if (err.name === 'TokenExpiredError') {
