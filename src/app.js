@@ -15,6 +15,7 @@ import salesRouter from './router/sales.route.js';
 import fulfillmentRouter from './router/fulfillment.route.js';
 import fileRouter from './router/file.route.js';
 import notificationRouter from './router/notification.route.js';
+import analyticsRouter from './router/analytics.route.js';
 const app = express();
 
 app.use(cors(corsOptions));
@@ -33,6 +34,7 @@ app.use('/api/sales', salesRouter);
 app.use('/api/fulfillment', fulfillmentRouter);
 app.use('/api/files', fileRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/analytics', analyticsRouter);
 
 app.use((err, req, res, next) => {
     if (err.name === 'TokenExpiredError') {
