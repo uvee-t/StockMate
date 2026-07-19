@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to StockMate API</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --panel: #ffffff;
+            --text: #182230;
+            --muted: #607086;
+            --line: #dbe3ef;
+            --brand: #13715b;
+            --brand-dark: #0d4f43;
+            --accent: #2563eb;
+            --shadow: 0 16px 45px rgba(24, 34, 48, 0.1);
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(19, 113, 91, 0.14), transparent 34rem),
+                linear-gradient(135deg, #f7fbff 0%, var(--bg) 45%, #eef4f8 100%);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 48px 0;
+        }
+
+        .hero {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 34px;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 4.4rem);
+            line-height: 1.05;
+            letter-spacing: 0;
+        }
+
+        .hero p {
+            max-width: 780px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.86);
+            font-size: clamp(1rem, 2vw, 1.18rem);
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 0 0 18px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: clamp(1.45rem, 3vw, 2rem);
+            letter-spacing: 0;
+        }
+
+        .section-title p {
+            max-width: 520px;
+            margin: 0;
+            color: var(--muted);
+            text-align: right;
+        }
+
+        .routes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .route-box {
+            overflow: hidden;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 28px rgba(24, 34, 48, 0.07);
+        }
+
+        .route-box h3 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0;
+            padding: 16px 18px;
+            background: #edf8f5;
+            border-bottom: 1px solid var(--line);
+            color: var(--brand-dark);
+            font-size: 1rem;
+            letter-spacing: 0;
+        }
+
+        .count {
+            min-width: 34px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-align: center;
+        }
+
+        .route-list {
+            display: grid;
+            gap: 10px;
+            margin: 0;
+            padding: 16px;
+            list-style: none;
+        }
+
+        .route {
+            display: grid;
+            grid-template-columns: 72px minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            min-height: 44px;
+            padding: 10px;
+            border: 1px solid #e6edf6;
+            border-radius: var(--radius);
+            background: #fbfdff;
+            cursor: pointer;
+            transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        .route:hover,
+        .route:focus-visible,
+        .route.active {
+            border-color: rgba(19, 113, 91, 0.45);
+            box-shadow: 0 8px 22px rgba(19, 113, 91, 0.12);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .method {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 26px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .post {
+            background: #13715b;
+        }
+
+        .get {
+            background: #2563eb;
+        }
+
+        .put {
+            background: #b45309;
+        }
+
+        .patch {
+            background: #7c3aed;
+        }
+
+        .delete {
+            background: #dc2626;
+        }
+
+        code {
+            display: block;
+            overflow-wrap: anywhere;
+            color: #1d2735;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .route-detail {
+            display: grid;
+            gap: 18px;
+            margin-bottom: 20px;
+            padding: 22px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: 0 12px 32px rgba(24, 34, 48, 0.08);
+        }
+
+        .detail-head {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .detail-head h3 {
+            margin: 0 0 8px;
+            font-size: clamp(1.15rem, 2vw, 1.45rem);
+            letter-spacing: 0;
+        }
+
+        .detail-head p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .endpoint {
+            display: inline-grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            max-width: 100%;
+            padding: 8px;
+            background: #f7fafc;
+            border: 1px solid #e6edf6;
+            border-radius: var(--radius);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .detail-card {
+            min-width: 0;
+            padding: 14px;
+            background: #fbfdff;
+            border: 1px solid #e6edf6;
+            border-radius: var(--radius);
+        }
+
+        .detail-card h4 {
+            margin: 0 0 10px;
+            color: var(--brand-dark);
+            font-size: 0.95rem;
+            letter-spacing: 0;
+        }
+
+        .detail-card ul {
+            display: grid;
+            gap: 8px;
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .detail-card li,
+        .detail-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .detail-card pre {
+            overflow-x: auto;
+            margin: 0;
+            padding: 12px;
+            color: #1d2735;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 0.84rem;
+            white-space: pre-wrap;
+        }
+
+        .footer {
+            margin-top: 24px;
+            padding: 18px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        @media (max-width: 980px) {
+            .routes-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .section-title p {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                width: min(100% - 20px, 1180px);
+                padding: 20px 0;
+            }
+
+            .hero {
+                padding: 24px 18px;
+            }
+
+            .routes-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .route {
+                grid-template-columns: 64px minmax(0, 1fr);
+            }
+
+            .route-list {
+                padding: 12px;
+            }
+
+            .route-detail {
+                padding: 16px;
+            }
+
+            .detail-head {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <h1>Welcome to StockMate</h1>
+            <p>Inventory management API for authentication, suppliers, warehouses, products, inventory, purchasing, sales, fulfillment, files, notifications, and analytics.</p>
+            <div class="meta" aria-label="API details">
+                <span class="pill">Base URL: /api</span>
+                <span class="pill">Node.js + Express</span>
+                <span class="pill">Protected routes use JWT auth</span>
+            </div>
+        </section>
+
+        <section aria-labelledby="routes-heading">
+            <div class="section-title">
+                <h2 id="routes-heading">API Routes</h2>
+                <p>All available StockMate endpoints are grouped by module below.</p>
+            </div>
+
+            <aside class="route-detail" id="routeDetail" aria-live="polite">
+                <div class="detail-head">
+                    <div>
+                        <h3 id="detailTitle">Select an API route</h3>
+                        <p id="detailDescription">Route inputs, output, and purpose will appear here.</p>
+                    </div>
+                    <div class="endpoint" aria-label="Selected endpoint">
+                        <span class="method get" id="detailMethod">GET</span>
+                        <code id="detailPath">/api</code>
+                    </div>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <h4>Inputs</h4>
+                        <ul id="detailInputs">
+                            <li>Choose a route from the list.</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Output</h4>
+                        <pre id="detailOutput">{
+  "success": true,
+  "data": {}
+}</pre>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Notes</h4>
+                        <ul id="detailNotes">
+                            <li>Most routes require a valid JWT token.</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="routes-grid">
+                <article class="route-box">
+                    <h3>Auth <span class="count">2</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/auth/register</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/auth/login</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Suppliers <span class="count">5</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/suppliers</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/suppliers</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/suppliers/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/suppliers/:id</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/suppliers/:id</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Warehouses <span class="count">9</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/warehouses</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/warehouses</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/warehouses/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/warehouses/:id</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/warehouses/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/warehouses/:id/zones</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/warehouses/:id/zones</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/warehouses/locations/create</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/warehouses/locations/all</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Products <span class="count">10</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/products/categories</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/products/categories</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/products/categories/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/products/categories/:id</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/products/categories/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/products</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/products</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/products/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/products/:id</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/products/:id</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Inventory <span class="count">8</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/inventory/in</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/inventory/out</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/inventory/adjust</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/inventory/transfer</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/inventory</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/inventory/ledger</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/inventory/low-stock</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/inventory/out-of-stock</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Purchase Orders <span class="count">8</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/purchase-orders</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/purchase-orders</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/purchase-orders/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/purchase-orders/:id/submit</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/purchase-orders/:id/approve</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/purchase-orders/:id/reject</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/purchase-orders/:id/cancel</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/purchase-orders/:id/receive</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Sales <span class="count">14</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/sales/customers</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/sales/customers</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/sales/customers/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/sales/customers/:id</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/sales/customers/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/sales/orders</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/sales/orders</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/sales/orders/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/sales/orders/:id</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/sales/orders/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/sales/orders/:id/confirm</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/sales/orders/:id/process</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/sales/orders/:id/complete</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/sales/orders/:id/cancel</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Fulfillment <span class="count">12</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/picklists</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/fulfillment/picklists</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/fulfillment/picklists/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/picklists/:id/release</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/picklists/:id/start</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/picklists/:id/complete</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/packing</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/dispatch</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/fulfillment/shipments</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/fulfillment/reservations</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/fulfillment/reservations</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/fulfillment/reservations/:id</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Files <span class="count">11</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/files/folders</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/files/folders</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/files</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/files</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/files/:id</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/files/:id</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/files/:id/versions</code></li>
+                        <li class="route"><span class="method patch">PATCH</span><code>/api/files/:id/archive</code></li>
+                        <li class="route"><span class="method patch">PATCH</span><code>/api/files/:id/restore</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/files/:id</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/files/:id/download</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Notifications <span class="count">10</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/notifications/templates</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/notifications/templates</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/notifications/templates/:id</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/notifications/preferences</code></li>
+                        <li class="route"><span class="method put">PUT</span><code>/api/notifications/preferences</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/notifications/send</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/notifications/history</code></li>
+                        <li class="route"><span class="method patch">PATCH</span><code>/api/notifications/:id/read</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/notifications/read-all</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/notifications/:id</code></li>
+                    </ul>
+                </article>
+
+                <article class="route-box">
+                    <h3>Analytics <span class="count">12</span></h3>
+                    <ul class="route-list">
+                        <li class="route"><span class="method post">POST</span><code>/api/analytics/saved-reports</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/saved-reports</code></li>
+                        <li class="route"><span class="method delete">DELETE</span><code>/api/analytics/saved-reports/:id</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/dashboard-summary</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/inventory-summary</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/sales-summary</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/purchase-summary</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/warehouse-summary</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/low-stock</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/top-selling</code></li>
+                        <li class="route"><span class="method post">POST</span><code>/api/analytics/generate</code></li>
+                        <li class="route"><span class="method get">GET</span><code>/api/analytics/history</code></li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <footer class="footer">
+            StockMate API is ready. Start your server and visit this page from the app root.
+        </footer>
+    </main>
+    <script>
+        const fields = {
+            register: ['Body: name, email, password, role ("admin" or "manager")'],
+            login: ['Body: email, password'],
+            supplierCreate: ['Body: name, contactPerson, phone (10 digits), email, address'],
+            supplierUpdate: ['Path: id', 'Body: any of name, contactPerson, phone, email, address'],
+            warehouseCreate: ['Body: name, address'],
+            warehouseUpdate: ['Path: id', 'Body: name and/or address'],
+            zoneCreate: ['Path: id (warehouse id)', 'Body: name, temperatureZone ("ambient", "chilled", or "frozen")'],
+            locationCreate: ['Body: zoneId, code, maxVolume, maxWeight'],
+            categoryCreate: ['Body: name, optional description, optional parentId'],
+            categoryUpdate: ['Path: id', 'Body: any of name, description, parentId'],
+            productCreate: ['Body: categoryId, sku, name, optional description, unitPrice, optional quantity, optional status'],
+            productUpdate: ['Path: id', 'Body: any of categoryId, sku, name, description, unitPrice, quantity, status'],
+            stockIn: ['Body: productId, locationId, quantity, optional lotNumber, optional serialNumber'],
+            stockOut: ['Body: productId, locationId, quantity'],
+            stockAdjust: ['Body: productId, locationId, quantity, reason'],
+            stockTransfer: ['Body: productId, fromLocationId, toLocationId, quantity, optional reason'],
+            inventoryQuery: ['Query: optional productId, locationId, sku, search'],
+            poCreate: ['Body: supplierId, poNumber, lines[] with productId, quantity, unitPrice'],
+            receiveGoods: ['Path: id (purchase order id)', 'Body: lines[] with productId, quantityReceived, optional lotNumber'],
+            customerCreate: ['Body: name, email, optional phone, optional address'],
+            customerUpdate: ['Path: id', 'Body: any of name, email, phone, address'],
+            salesOrderCreate: ['Body: customerId, orderNumber, lines[] with productId, quantity, unitPrice'],
+            salesOrderUpdate: ['Path: id', 'Body: any of customerId, orderNumber, lines[], status'],
+            pickListCreate: ['Body: salesOrderId, code, tasks[] with productId, fromLocationId, quantity'],
+            reservationCreate: ['Body: salesOrderId, productId, locationId, quantity'],
+            packCartons: ['Body: salesOrderId, cartons[] with cartonNumber and lines[]'],
+            dispatch: ['Body: salesOrderId, shipmentNumber, carrier, trackingNumber, cartons[]'],
+            folderCreate: ['Body: name, optional parentId'],
+            fileCreate: ['Body: name, optional folderId, sizeBytes, storageKey'],
+            fileUpdate: ['Path: id', 'Body: name and/or folderId'],
+            fileVersion: ['Path: id', 'Body: sizeBytes, storageKey'],
+            fileQuery: ['Query: optional folderId, isArchived, search'],
+            templateCreate: ['Body: name, optional subject, body, channels[] ("EMAIL", "SMS", "IN_APP")'],
+            preferenceUpdate: ['Body: channelsEnabled[] ("EMAIL", "SMS", "IN_APP")'],
+            sendNotification: ['Body: recipientId, title, message, channel, optional templateId'],
+            notificationHistory: ['Query: optional channel, status'],
+            savedReportCreate: ['Body: name, reportType ("INVENTORY", "SALES", "PURCHASE", "WAREHOUSE"), optional filters'],
+            reportGenerate: ['Body: reportType ("INVENTORY", "SALES", "PURCHASE", "WAREHOUSE"), optional filters'],
+            idOnly: ['Path: id'],
+            none: ['No request body required']
+        };
+
+        const routeDetails = {};
+
+        function add(method, path, title, description, inputs, output, notes) {
+            routeDetails[`${method} ${path}`] = {
+                method,
+                path,
+                title,
+                description,
+                inputs,
+                output,
+                notes: notes || ['Requires JWT auth cookie/header unless this is an auth route.']
+            };
+        }
+
+        function output(status, message, data) {
+            return JSON.stringify({
+                status,
+                success: true,
+                ...(message ? { message } : {}),
+                data
+            }, null, 2);
+        }
+
+        function simpleData(name) {
+            return { [name]: 'record or list' };
+        }
+
+        add('POST', '/api/auth/register', 'Register user', 'Creates a new StockMate user account.', fields.register, output(201, 'User registered successfully', { userId: 'mongodb_id' }), ['Public route.']);
+        add('POST', '/api/auth/login', 'Login user', 'Authenticates a user and returns a JWT token.', fields.login, JSON.stringify({ status: 200, success: true, token: 'jwt_token' }, null, 2), ['Public route.', 'Also sets a httpOnly token cookie.']);
+
+        add('POST', '/api/suppliers', 'Create supplier', 'Adds a supplier record.', fields.supplierCreate, output(201, 'Supplier created', { supplierId: 'mongodb_id' }), ['Admin only.']);
+        add('GET', '/api/suppliers', 'List suppliers', 'Returns all suppliers.', fields.none, output(200, '', simpleData('suppliers')));
+        add('GET', '/api/suppliers/:id', 'Get supplier', 'Returns one supplier by id.', fields.idOnly, output(200, '', simpleData('supplier')));
+        add('PUT', '/api/suppliers/:id', 'Update supplier', 'Updates supplier details.', fields.supplierUpdate, output(200, 'Supplier updated successfully.', { supplierId: 'mongodb_id', updatedFields: {} }));
+        add('DELETE', '/api/suppliers/:id', 'Delete supplier', 'Deletes a supplier record.', fields.idOnly, output(200, 'Supplier deleted successfully.', simpleData('supplier')), ['Admin only.']);
+
+        add('POST', '/api/warehouses', 'Create warehouse', 'Adds a warehouse.', fields.warehouseCreate, output(201, 'Warehouse created', { warehouseId: 'mongodb_id' }), ['Admin only.']);
+        add('GET', '/api/warehouses', 'List warehouses', 'Returns all warehouses.', fields.none, output(200, '', simpleData('warehouses')));
+        add('GET', '/api/warehouses/:id', 'Get warehouse', 'Returns one warehouse by id.', fields.idOnly, output(200, '', simpleData('warehouse')));
+        add('PUT', '/api/warehouses/:id', 'Update warehouse', 'Updates warehouse details.', fields.warehouseUpdate, output(200, 'Warehouse updated successfully.', simpleData('warehouse')));
+        add('DELETE', '/api/warehouses/:id', 'Delete warehouse', 'Deletes a warehouse.', fields.idOnly, output(200, 'Warehouse deleted successfully.', simpleData('warehouse')), ['Admin only.']);
+        add('POST', '/api/warehouses/:id/zones', 'Create warehouse zone', 'Creates a temperature zone inside a warehouse.', fields.zoneCreate, output(201, 'Zone created', { zoneId: 'mongodb_id' }), ['Admin only.']);
+        add('GET', '/api/warehouses/:id/zones', 'List warehouse zones', 'Returns zones for a warehouse.', ['Path: id (warehouse id)'], output(200, '', simpleData('zones')));
+        add('POST', '/api/warehouses/locations/create', 'Create location', 'Creates a location/bin inside a warehouse zone.', fields.locationCreate, output(201, 'Location created', { locationId: 'mongodb_id' }), ['Admin only.']);
+        add('GET', '/api/warehouses/locations/all', 'List locations', 'Returns all location/bin records.', fields.none, output(200, '', simpleData('locations')));
+
+        add('POST', '/api/products/categories', 'Create category', 'Creates a product category.', fields.categoryCreate, output(201, 'Category created', { categoryId: 'mongodb_id' }), ['Admin only.']);
+        add('GET', '/api/products/categories', 'List categories', 'Returns all product categories.', fields.none, output(200, '', simpleData('categories')));
+        add('GET', '/api/products/categories/:id', 'Get category', 'Returns one category by id.', fields.idOnly, output(200, '', simpleData('category')));
+        add('PUT', '/api/products/categories/:id', 'Update category', 'Updates a category.', fields.categoryUpdate, output(200, 'Category updated successfully.', simpleData('category')), ['Admin only.']);
+        add('DELETE', '/api/products/categories/:id', 'Delete category', 'Deletes a category.', fields.idOnly, output(200, 'Category deleted successfully.', simpleData('category')), ['Admin only.']);
+        add('POST', '/api/products', 'Create product', 'Creates a product/SKU.', fields.productCreate, output(201, 'Product created', { productId: 'mongodb_id' }), ['Admin only.']);
+        add('GET', '/api/products', 'List products', 'Returns products, optionally filtered by name or category.', ['Query: optional name, categoryId'], output(200, '', simpleData('products')));
+        add('GET', '/api/products/:id', 'Get product', 'Returns one product by id.', fields.idOnly, output(200, '', simpleData('product')));
+        add('PUT', '/api/products/:id', 'Update product', 'Updates product details.', fields.productUpdate, output(200, 'Product updated successfully.', simpleData('product')));
+        add('DELETE', '/api/products/:id', 'Delete product', 'Deletes a product.', fields.idOnly, output(200, 'Product deleted successfully.', simpleData('product')), ['Admin only.']);
+
+        add('POST', '/api/inventory/in', 'Stock in', 'Receives stock into a location.', fields.stockIn, output(200, 'Stock received successfully', simpleData('stockItem')));
+        add('POST', '/api/inventory/out', 'Stock out', 'Dispatches stock out of a location.', fields.stockOut, output(200, 'Stock dispatched successfully', {}));
+        add('POST', '/api/inventory/adjust', 'Adjust stock', 'Applies a manual inventory adjustment with a reason.', fields.stockAdjust, output(200, 'Stock adjusted successfully', simpleData('stockItem')));
+        add('POST', '/api/inventory/transfer', 'Transfer stock', 'Moves stock between two locations.', fields.stockTransfer, output(200, 'Stock transferred successfully', {}));
+        add('GET', '/api/inventory', 'Query current stock', 'Returns current stock items with optional filters.', fields.inventoryQuery, output(200, '', simpleData('stockItems')));
+        add('GET', '/api/inventory/ledger', 'Inventory ledger', 'Returns inventory movement history.', fields.none, output(200, '', simpleData('ledger')));
+        add('GET', '/api/inventory/low-stock', 'Low stock', 'Returns stock items below the low-stock threshold.', fields.none, output(200, '', simpleData('items')));
+        add('GET', '/api/inventory/out-of-stock', 'Out of stock', 'Returns products without active stock.', fields.none, output(200, '', simpleData('products')));
+
+        add('POST', '/api/purchase-orders', 'Create purchase order', 'Creates a purchase order with line items.', fields.poCreate, output(201, 'Purchase Order created', { poId: 'mongodb_id' }));
+        add('GET', '/api/purchase-orders', 'List purchase orders', 'Returns all purchase orders.', fields.none, output(200, '', simpleData('purchaseOrders')));
+        add('GET', '/api/purchase-orders/:id', 'Get purchase order', 'Returns one purchase order by id.', fields.idOnly, output(200, '', simpleData('purchaseOrder')));
+        add('POST', '/api/purchase-orders/:id/submit', 'Submit purchase order', 'Moves a draft purchase order into approval flow.', fields.idOnly, output(200, 'Purchase Order submitted for approval.', simpleData('purchaseOrder')));
+        add('POST', '/api/purchase-orders/:id/approve', 'Approve purchase order', 'Approves a submitted purchase order.', fields.idOnly, output(200, 'Purchase Order approved.', simpleData('purchaseOrder')), ['Admin only.']);
+        add('POST', '/api/purchase-orders/:id/reject', 'Reject purchase order', 'Rejects a submitted purchase order.', fields.idOnly, output(200, 'Purchase Order rejected.', simpleData('purchaseOrder')), ['Admin only.']);
+        add('POST', '/api/purchase-orders/:id/cancel', 'Cancel purchase order', 'Cancels a purchase order.', fields.idOnly, output(200, 'Purchase Order cancelled.', simpleData('purchaseOrder')));
+        add('POST', '/api/purchase-orders/:id/receive', 'Receive goods', 'Receives purchase order goods and updates inventory.', fields.receiveGoods, output(200, 'Goods received successfully and inventory updated', simpleData('receipt')));
+
+        add('POST', '/api/sales/customers', 'Create customer', 'Creates a customer.', fields.customerCreate, output(201, 'Customer created', { customerId: 'mongodb_id' }));
+        add('GET', '/api/sales/customers', 'List customers', 'Returns all customers.', fields.none, output(200, '', simpleData('customers')));
+        add('GET', '/api/sales/customers/:id', 'Get customer', 'Returns one customer by id.', fields.idOnly, output(200, '', simpleData('customer')));
+        add('PUT', '/api/sales/customers/:id', 'Update customer', 'Updates customer details.', fields.customerUpdate, output(200, 'Customer updated successfully.', simpleData('customer')));
+        add('DELETE', '/api/sales/customers/:id', 'Delete customer', 'Deletes a customer.', fields.idOnly, output(200, 'Customer deleted successfully.', simpleData('customer')), ['Admin only.']);
+        add('POST', '/api/sales/orders', 'Create sales order', 'Creates a sales order with line items.', fields.salesOrderCreate, output(201, 'Sales Order created', { soId: 'mongodb_id' }));
+        add('GET', '/api/sales/orders', 'List sales orders', 'Returns all sales orders.', fields.none, output(200, '', simpleData('salesOrders')));
+        add('GET', '/api/sales/orders/:id', 'Get sales order', 'Returns one sales order by id.', fields.idOnly, output(200, '', simpleData('salesOrder')));
+        add('PUT', '/api/sales/orders/:id', 'Update sales order', 'Updates sales order details.', fields.salesOrderUpdate, output(200, 'Sales Order updated successfully.', simpleData('salesOrder')));
+        add('DELETE', '/api/sales/orders/:id', 'Delete sales order', 'Deletes a sales order.', fields.idOnly, output(200, 'Sales Order deleted successfully.', {}), ['Admin only.']);
+        add('POST', '/api/sales/orders/:id/confirm', 'Confirm sales order', 'Confirms an order and reduces inventory stock.', fields.idOnly, output(200, 'Sales Order confirmed successfully and inventory stock reduced.', simpleData('salesOrder')));
+        add('POST', '/api/sales/orders/:id/process', 'Process sales order', 'Moves a sales order into processing status.', fields.idOnly, output(200, 'Sales Order status updated to processing.', simpleData('salesOrder')));
+        add('POST', '/api/sales/orders/:id/complete', 'Complete sales order', 'Marks a sales order as completed.', fields.idOnly, output(200, 'Sales Order status completed.', simpleData('salesOrder')));
+        add('POST', '/api/sales/orders/:id/cancel', 'Cancel sales order', 'Cancels an order and returns stock to inventory.', fields.idOnly, output(200, 'Sales Order cancelled successfully and stock returned to inventory.', simpleData('salesOrder')));
+
+        add('POST', '/api/fulfillment/picklists', 'Create pick list', 'Creates picking tasks for a sales order.', fields.pickListCreate, output(201, 'Pick List created successfully', { pickListId: 'mongodb_id' }));
+        add('GET', '/api/fulfillment/picklists', 'List pick lists', 'Returns all pick lists.', fields.none, output(200, '', simpleData('pickLists')));
+        add('GET', '/api/fulfillment/picklists/:id', 'Get pick list', 'Returns one pick list by id.', fields.idOnly, output(200, '', simpleData('pickList')));
+        add('POST', '/api/fulfillment/picklists/:id/release', 'Release pick list', 'Releases a pick list to pickers.', fields.idOnly, output(200, 'Pick List released to pickers', simpleData('pickList')));
+        add('POST', '/api/fulfillment/picklists/:id/start', 'Start picking', 'Marks a pick list as in progress.', fields.idOnly, output(200, 'Picking in progress', simpleData('pickList')));
+        add('POST', '/api/fulfillment/picklists/:id/complete', 'Complete picking', 'Completes picking and updates stock state.', fields.idOnly, output(200, 'Picking completed successfully', simpleData('pickList')));
+        add('POST', '/api/fulfillment/packing', 'Pack cartons', 'Registers cartons packed for a sales order.', fields.packCartons, output(200, 'Cartons packed successfully. Ready for carrier shipment.', {}));
+        add('POST', '/api/fulfillment/dispatch', 'Dispatch shipment', 'Creates shipment details and dispatches cargo.', fields.dispatch, output(201, 'Shipment created and cargo dispatched', simpleData('shipment')));
+        add('GET', '/api/fulfillment/shipments', 'Shipment history', 'Returns shipment history.', fields.none, output(200, '', simpleData('shipments')));
+        add('POST', '/api/fulfillment/reservations', 'Create reservation', 'Reserves inventory for a sales order.', fields.reservationCreate, output(201, 'Inventory reserved successfully', simpleData('reservation')));
+        add('GET', '/api/fulfillment/reservations', 'List reservations', 'Returns inventory reservations.', fields.none, output(200, '', simpleData('reservations')));
+        add('DELETE', '/api/fulfillment/reservations/:id', 'Release reservation', 'Deletes a reservation and returns stock.', fields.idOnly, output(200, 'Reservation released and stock returned to inventory.', {}));
+
+        add('POST', '/api/files/folders', 'Create folder', 'Creates a document folder.', fields.folderCreate, output(201, 'Folder created successfully', { folderId: 'mongodb_id' }));
+        add('GET', '/api/files/folders', 'List folders', 'Returns all folders.', fields.none, output(200, '', simpleData('folders')));
+        add('POST', '/api/files', 'Create file metadata', 'Registers file metadata and first storage version.', fields.fileCreate, output(201, 'File metadata registered', { fileId: 'mongodb_id' }));
+        add('GET', '/api/files', 'List files', 'Returns files for the current user with optional filters.', fields.fileQuery, output(200, '', simpleData('files')));
+        add('GET', '/api/files/:id', 'Get file', 'Returns one file metadata record.', fields.idOnly, output(200, '', simpleData('file')));
+        add('PUT', '/api/files/:id', 'Update file', 'Updates file metadata.', fields.fileUpdate, output(200, 'File metadata updated successfully.', simpleData('file')));
+        add('POST', '/api/files/:id/versions', 'Add file version', 'Adds a new storage version to a file.', fields.fileVersion, output(200, 'File version bumped successfully.', simpleData('file')));
+        add('PATCH', '/api/files/:id/archive', 'Archive file', 'Marks a file as archived.', fields.idOnly, output(200, 'File archived successfully', simpleData('file')));
+        add('PATCH', '/api/files/:id/restore', 'Restore file', 'Restores an archived file.', fields.idOnly, output(200, 'File restored successfully', simpleData('file')));
+        add('DELETE', '/api/files/:id', 'Delete file', 'Permanently deletes a file metadata record.', fields.idOnly, output(200, 'File permanently deleted', {}), ['Admin only.']);
+        add('GET', '/api/files/:id/download', 'Get download URL', 'Returns a signed download URL for the latest file version.', fields.idOnly, output(200, '', { downloadUrl: 'https://mock-storage.local/download/...' }));
+
+        add('POST', '/api/notifications/templates', 'Create notification template', 'Creates a reusable notification template.', fields.templateCreate, output(201, 'Notification template created successfully', simpleData('template')), ['Admin only.']);
+        add('GET', '/api/notifications/templates', 'List notification templates', 'Returns notification templates.', fields.none, output(200, '', simpleData('templates')));
+        add('DELETE', '/api/notifications/templates/:id', 'Delete notification template', 'Deletes a notification template.', fields.idOnly, output(200, 'Notification template deleted successfully', {}), ['Admin only.']);
+        add('GET', '/api/notifications/preferences', 'Get notification preferences', 'Returns notification preferences for the current user.', fields.none, output(200, '', simpleData('preference')));
+        add('PUT', '/api/notifications/preferences', 'Update notification preferences', 'Updates enabled notification channels.', fields.preferenceUpdate, output(200, 'Notification preferences updated successfully.', simpleData('preference')));
+        add('POST', '/api/notifications/send', 'Send notification', 'Creates and sends/logs a notification.', fields.sendNotification, output(201, 'Notification queued/sent successfully depending on channel.', simpleData('notification')));
+        add('GET', '/api/notifications/history', 'Notification history', 'Returns notifications for the current user with optional filters.', fields.notificationHistory, output(200, '', simpleData('notifications')));
+        add('PATCH', '/api/notifications/:id/read', 'Mark notification read', 'Marks one notification as read.', fields.idOnly, output(200, 'Notification marked as read.', simpleData('notification')));
+        add('POST', '/api/notifications/read-all', 'Mark all notifications read', 'Marks every notification as read for the current user.', fields.none, output(200, 'All notifications marked as read.', {}));
+        add('DELETE', '/api/notifications/:id', 'Delete notification', 'Deletes one notification from history.', fields.idOnly, output(200, 'Notification deleted from history successfully.', {}));
+
+        add('POST', '/api/analytics/saved-reports', 'Create saved report', 'Saves report configuration and filters.', fields.savedReportCreate, output(201, 'Saved Report configuration created successfully.', simpleData('report')));
+        add('GET', '/api/analytics/saved-reports', 'List saved reports', 'Returns saved report configurations.', fields.none, output(200, '', simpleData('reports')));
+        add('DELETE', '/api/analytics/saved-reports/:id', 'Delete saved report', 'Deletes a saved report configuration.', fields.idOnly, output(200, 'Saved Report configuration deleted successfully.', {}));
+        add('GET', '/api/analytics/dashboard-summary', 'Dashboard summary', 'Returns dashboard totals and summary metrics.', fields.none, output(200, '', simpleData('summary')));
+        add('GET', '/api/analytics/inventory-summary', 'Inventory summary', 'Returns inventory analytics.', fields.none, output(200, '', simpleData('summary')));
+        add('GET', '/api/analytics/sales-summary', 'Sales summary', 'Returns sales analytics.', fields.none, output(200, '', simpleData('summary')));
+        add('GET', '/api/analytics/purchase-summary', 'Purchase summary', 'Returns purchase analytics.', fields.none, output(200, '', simpleData('summary')));
+        add('GET', '/api/analytics/warehouse-summary', 'Warehouse summary', 'Returns warehouse analytics.', fields.none, output(200, '', simpleData('summary')));
+        add('GET', '/api/analytics/low-stock', 'Low-stock analytics', 'Returns low-stock analytics.', fields.none, output(200, '', simpleData('lowStock')));
+        add('GET', '/api/analytics/top-selling', 'Top-selling products', 'Returns the top selling completed-order products.', fields.none, output(200, '', simpleData('topProducts')));
+        add('POST', '/api/analytics/generate', 'Generate report', 'Generates report metadata and logs report history.', fields.reportGenerate, output(201, 'Report generated and logged in history.', simpleData('history')));
+        add('GET', '/api/analytics/history', 'Report history', 'Returns generated report history for the current user.', fields.none, output(200, '', simpleData('history')));
+
+        const detailTitle = document.getElementById('detailTitle');
+        const detailDescription = document.getElementById('detailDescription');
+        const detailMethod = document.getElementById('detailMethod');
+        const detailPath = document.getElementById('detailPath');
+        const detailInputs = document.getElementById('detailInputs');
+        const detailOutput = document.getElementById('detailOutput');
+        const detailNotes = document.getElementById('detailNotes');
+
+        function renderList(target, items) {
+            target.innerHTML = '';
+            items.forEach((item) => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                target.appendChild(li);
+            });
+        }
+
+        function showRoute(routeElement) {
+            document.querySelectorAll('.route.active').forEach((item) => item.classList.remove('active'));
+            routeElement.classList.add('active');
+
+            const method = routeElement.querySelector('.method').textContent.trim();
+            const path = routeElement.querySelector('code').textContent.trim();
+            const details = routeDetails[`${method} ${path}`];
+
+            detailMethod.className = `method ${method.toLowerCase()}`;
+            detailMethod.textContent = method;
+            detailPath.textContent = path;
+
+            if (!details) {
+                detailTitle.textContent = 'Route details';
+                detailDescription.textContent = 'This route exists in the route list, but no extra metadata is available.';
+                renderList(detailInputs, fields.none);
+                detailOutput.textContent = output(200, '', {});
+                renderList(detailNotes, ['Requires JWT auth cookie/header unless this is an auth route.']);
+                return;
+            }
+
+            detailTitle.textContent = details.title;
+            detailDescription.textContent = details.description;
+            renderList(detailInputs, details.inputs);
+            detailOutput.textContent = details.output;
+            renderList(detailNotes, details.notes);
+        }
+
+        document.querySelectorAll('.route').forEach((routeElement) => {
+            routeElement.setAttribute('role', 'button');
+            routeElement.setAttribute('tabindex', '0');
+            routeElement.addEventListener('click', () => showRoute(routeElement));
+            routeElement.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    showRoute(routeElement);
+                }
+            });
+        });
+
+        const firstRoute = document.querySelector('.route');
+        if (firstRoute) {
+            showRoute(firstRoute);
+        }
+    </script>
+</body>
+</html>
